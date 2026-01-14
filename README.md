@@ -9,6 +9,7 @@ This is a Rails API backend demo for a SaaS productivity platform where users ma
 - `bin/dev` (or `bin/rails server`) starts the server at `http://localhost:3000`.
 - `bin/rails test` runs the test suite.
 - `bin/rubocop` runs linting.
+- `bin/ci` runs the same checks as GitHub Actions.
 
 ## Key Features
 
