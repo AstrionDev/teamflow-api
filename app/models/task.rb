@@ -1,5 +1,5 @@
 class Task < ApplicationRecord
-  STATUSES = %w[todo in_progress done].freeze
+  STATUSES = %w[ todo in_progress done ].freeze
 
   belongs_to :project
   belongs_to :assignee, class_name: "User", optional: true
