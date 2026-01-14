@@ -4,6 +4,7 @@ module Api
       rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
       rescue_from ActiveRecord::RecordInvalid, with: :render_unprocessable_entity
       rescue_from ActiveRecord::InvalidForeignKey, with: :render_conflict
+      rescue_from ActionController::ParameterMissing, with: :render_bad_request
 
       private
 
@@ -17,6 +18,10 @@ module Api
 
       def render_conflict
         render json: { error: "conflict" }, status: :conflict
+      end
+
+      def render_bad_request(error)
+        render json: { error: "bad_request", details: error.message }, status: :bad_request
       end
     end
   end
