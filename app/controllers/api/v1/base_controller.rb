@@ -1,6 +1,8 @@
 module Api
   module V1
     class BaseController < ActionController::API
+      before_action :authenticate_user!
+
       rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
       rescue_from ActiveRecord::RecordInvalid, with: :render_unprocessable_entity
       rescue_from ActiveRecord::InvalidForeignKey, with: :render_conflict
@@ -22,6 +24,21 @@ module Api
 
       def render_bad_request(error)
         render json: { error: "bad_request", details: error.message }, status: :bad_request
+      end
+
+      def authenticate_user!
+        header = request.headers["Authorization"].to_s
+        token = header.split(" ").last
+        return render json: { error: "unauthorized" }, status: :unauthorized if token.blank?
+
+        payload = JsonWebToken.decode(token)
+        @current_user = User.find(payload["sub"])
+      rescue JsonWebToken::DecodeError, ActiveRecord::RecordNotFound
+        render json: { error: "unauthorized" }, status: :unauthorized
+      end
+
+      def current_user
+        @current_user
       end
     end
   end
