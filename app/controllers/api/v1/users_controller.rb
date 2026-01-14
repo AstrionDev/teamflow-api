@@ -1,6 +1,8 @@
 module Api
   module V1
     class UsersController < BaseController
+      skip_before_action :authenticate_user!, only: :create
+
       def index
         render json: User.all
       end
@@ -29,7 +31,7 @@ module Api
       private
 
       def user_params
-        params.require(:user).permit(:name, :email)
+        params.require(:user).permit(:name, :email, :password, :password_confirmation)
       end
     end
   end
