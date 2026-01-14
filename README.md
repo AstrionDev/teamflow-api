@@ -49,15 +49,14 @@ This is a Rails API backend demo for a SaaS productivity platform where users ma
 - Pagination, filtering, and sorting on list endpoints
 - Minitest coverage for models, services, and request specs
 
-## Problem-Solving Showcased
-- Multi-organization membership and dynamic role handling
-- Secure, maintainable API endpoint design
-- Task workflows and permission modeling
-- Background job orchestration for production readiness
-- Efficient multi-tenant database planning
+## Highlights
+- Multi-tenant data modeling with org-scoped authorization and role boundaries
+- API-first design with versioning, JWT auth, and consistent JSON contracts
+- Practical workflow logic (task state transitions, filtering, pagination)
+- Background jobs for async operations and time-based notifications
+- Service-object driven business logic with clear model boundaries
 
-## Why This Project Stands Out
-- Mirrors real-world client needs for Rails backend developers
-- Demonstrates complex business logic and SaaS requirements
-- Easy to extend with a React/Next.js or mobile frontend
-- Emphasizes clean structure, scalability, and modern Rails practices
+## For Reviewers
+- Built to mirror real SaaS constraints: permissions, subscriptions, and audits
+- Emphasis on maintainable Rails structure over demo shortcuts
+- Ready to pair with a frontend (React, Next.js, or mobile clients)
