@@ -4,26 +4,33 @@ module Api
       skip_before_action :authenticate_user!, only: :create
 
       def index
-        render json: User.all
+        users = policy_scope(User)
+        render json: users
       end
 
       def show
-        render json: User.find(params[:id])
+        user = User.find(params[:id])
+        authorize user
+        render json: user
       end
 
       def create
-        user = User.create!(user_params)
+        user = User.new(user_params)
+        authorize user
+        user.save!
         render json: user, status: :created
       end
 
       def update
         user = User.find(params[:id])
+        authorize user
         user.update!(user_params)
         render json: user
       end
 
       def destroy
         user = User.find(params[:id])
+        authorize user
         user.destroy
         head :no_content
       end

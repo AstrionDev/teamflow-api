@@ -2,26 +2,33 @@ module Api
   module V1
     class ProjectsController < BaseController
       def index
-        render json: organization.projects
+        projects = policy_scope(organization.projects)
+        render json: projects
       end
 
       def show
-        render json: organization.projects.find(params[:id])
+        project = organization.projects.find(params[:id])
+        authorize project
+        render json: project
       end
 
       def create
-        project = organization.projects.create!(project_params)
+        project = organization.projects.new(project_params)
+        authorize project
+        project.save!
         render json: project, status: :created
       end
 
       def update
         project = organization.projects.find(params[:id])
+        authorize project
         project.update!(project_params)
         render json: project
       end
 
       def destroy
         project = organization.projects.find(params[:id])
+        authorize project
         project.destroy
         head :no_content
       end

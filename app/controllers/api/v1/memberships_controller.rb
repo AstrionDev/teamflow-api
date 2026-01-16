@@ -2,23 +2,26 @@ module Api
   module V1
     class MembershipsController < BaseController
       def index
-        render json: organization.memberships
+        memberships = policy_scope(organization.memberships)
+        render json: memberships
       end
 
       def show
-        render json: organization.memberships.find(params[:id])
+        membership = organization.memberships.find(params[:id])
+        authorize membership
+        render json: membership
       end
 
       def create
-        membership = organization.memberships.new
-        membership.user_id = membership_user_id
-        membership.role = membership_role
+        membership = organization.memberships.new(user_id: membership_user_id, role: membership_role)
+        authorize membership
         membership.save!
         render json: membership, status: :created
       end
 
       def update
         membership = organization.memberships.find(params[:id])
+        authorize membership
         membership.role = membership_role
         membership.save!
         render json: membership
@@ -26,6 +29,7 @@ module Api
 
       def destroy
         membership = organization.memberships.find(params[:id])
+        authorize membership
         membership.destroy
         head :no_content
       end
