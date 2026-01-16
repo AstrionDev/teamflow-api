@@ -42,7 +42,7 @@ class Api::V1::AuthorizationTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     body = JSON.parse(response.body)
-    assert_equal [@organization.id], body.map { |org| org["id"] }
+    assert_equal [ @organization.id ], body.map { |org| org["id"] }
   end
 
   test "member cannot update organization" do
