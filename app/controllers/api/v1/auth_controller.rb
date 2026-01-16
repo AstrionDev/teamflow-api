@@ -2,6 +2,7 @@ module Api
   module V1
     class AuthController < BaseController
       skip_before_action :authenticate_user!, only: :login
+      skip_after_action :verify_authorized, only: :login
 
       def login
         user = User.find_by!(email: params.require(:email))
