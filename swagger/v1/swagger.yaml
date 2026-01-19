@@ -1,0 +1,55 @@
+---
+openapi: 3.0.1
+info:
+  title: Teamflow API V1
+  version: v1
+paths:
+  "/api/v1/auth/login":
+    post:
+      summary: login
+      tags:
+      - Auth
+      parameters: []
+      responses:
+        '200':
+          description: token issued
+        '401':
+          description: invalid credentials
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+              - email
+              - password
+  "/api/v1/organizations":
+    get:
+      summary: list organizations
+      tags:
+      - Organizations
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: success
+        '401':
+          description: unauthorized
+servers:
+- url: http://{defaultHost}
+  variables:
+    defaultHost:
+      default: localhost:3000
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+- bearerAuth: []
