@@ -8,6 +8,7 @@ module Api
       after_action :verify_policy_scoped, if: :verify_pundit_policy_scope?
 
       rescue_from Pundit::NotAuthorizedError, with: :render_forbidden
+      rescue_from ActionController::BadRequest, with: :render_bad_request
       rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
       rescue_from ActiveRecord::RecordInvalid, with: :render_unprocessable_entity
       rescue_from ActiveRecord::InvalidForeignKey, with: :render_conflict
