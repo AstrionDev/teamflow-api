@@ -15,6 +15,8 @@ class Task < ApplicationRecord
   validates :priority, inclusion: { in: PRIORITY_RANGE }
   validate :status_transition, if: :will_save_change_to_status?
 
+  after_commit :notify_assignee, on: [ :create, :update ]
+
   def can_transition_to?(next_status)
     return false if next_status.blank?
     return true if status.blank?
@@ -33,5 +35,18 @@ class Task < ApplicationRecord
     unless STATUS_TRANSITIONS.fetch(previous_status, []).include?(status)
       errors.add(:status, "cannot transition from #{previous_status} to #{status}")
     end
+  end
+
+  def notify_assignee
+    return unless saved_change_to_assignee_id?
+    return if assignee_id.nil?
+
+    Notification.create!(
+      organization: project.organization,
+      user: assignee,
+      kind: "task_assigned",
+      message: "You were assigned to task #{title}",
+      metadata: { task_id: id, project_id: project_id }
+    )
   end
 end

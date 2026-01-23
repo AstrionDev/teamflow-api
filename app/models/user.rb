@@ -8,6 +8,17 @@ class User < ApplicationRecord
            foreign_key: :assignee_id,
            inverse_of: :assignee,
            dependent: :nullify
+  has_many :notifications, dependent: :destroy
+  has_many :sent_invitations,
+           class_name: "Invitation",
+           foreign_key: :invited_by_id,
+           inverse_of: :invited_by,
+           dependent: :nullify
+  has_many :audit_logs,
+           class_name: "AuditLog",
+           foreign_key: :actor_id,
+           inverse_of: :actor,
+           dependent: :nullify
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true
