@@ -21,8 +21,12 @@ Rails.application.routes.draw do
     namespace :v1 do
       post "auth/login", to: "auth#login"
       resources :users
+      resources :notifications, only: [ :index, :show, :update ]
       resources :organizations do
         resources :memberships
+        resources :audit_logs, only: [ :index ]
+        resources :invitations, only: [ :index, :show, :create, :destroy ]
+        resource :subscription, only: [ :show, :update ]
         resources :projects do
           resources :tasks
         end

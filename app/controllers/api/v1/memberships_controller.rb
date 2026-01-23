@@ -15,7 +15,9 @@ module Api
       def create
         membership = organization.memberships.new(user_id: membership_user_id, role: membership_role)
         authorize membership
+        PlanLimit.enforce!(organization.subscription, :memberships, organization.memberships.count)
         membership.save!
+        log_audit!(action: "membership.created", record: membership, organization: organization)
         render json: membership, status: :created
       end
 
@@ -24,6 +26,7 @@ module Api
         authorize membership
         membership.role = membership_role
         membership.save!
+        log_audit!(action: "membership.updated", record: membership, organization: organization)
         render json: membership
       end
 
@@ -31,6 +34,7 @@ module Api
         membership = organization.memberships.find(params[:id])
         authorize membership
         membership.destroy
+        log_audit!(action: "membership.deleted", record: membership, organization: organization)
         head :no_content
       end
 

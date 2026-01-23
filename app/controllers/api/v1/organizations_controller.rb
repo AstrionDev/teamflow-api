@@ -21,6 +21,7 @@ module Api
           organization.memberships.create!(user: current_user, role: "owner")
         end
 
+        log_audit!(action: "organization.created", record: organization, organization: organization)
         render json: organization, status: :created
       end
 
@@ -28,6 +29,7 @@ module Api
         organization = Organization.find(params[:id])
         authorize organization
         organization.update!(organization_params)
+        log_audit!(action: "organization.updated", record: organization, organization: organization)
         render json: organization
       end
 
@@ -35,6 +37,7 @@ module Api
         organization = Organization.find(params[:id])
         authorize organization
         organization.destroy
+        log_audit!(action: "organization.deleted", record: organization, organization: organization)
         head :no_content
       end
 

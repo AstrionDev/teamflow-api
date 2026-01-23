@@ -22,7 +22,9 @@ module Api
       def create
         task = project.tasks.new(task_params)
         authorize task
+        PlanLimit.enforce!(project.organization.subscription, :tasks_per_project, project.tasks.count)
         task.save!
+        log_audit!(action: "task.created", record: task, organization: organization)
         render json: task, status: :created
       end
 
@@ -30,6 +32,7 @@ module Api
         task = project.tasks.find(params[:id])
         authorize task
         task.update!(task_params)
+        log_audit!(action: "task.updated", record: task, organization: organization)
         render json: task
       end
 
@@ -37,6 +40,7 @@ module Api
         task = project.tasks.find(params[:id])
         authorize task
         task.destroy
+        log_audit!(action: "task.deleted", record: task, organization: organization)
         head :no_content
       end
 

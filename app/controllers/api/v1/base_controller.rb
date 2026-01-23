@@ -8,6 +8,7 @@ module Api
       after_action :verify_policy_scoped, if: :verify_pundit_policy_scope?
 
       rescue_from Pundit::NotAuthorizedError, with: :render_forbidden
+      rescue_from PlanLimit::LimitExceeded, with: :render_plan_limit_exceeded
       rescue_from ActionController::BadRequest, with: :render_bad_request
       rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
       rescue_from ActiveRecord::RecordInvalid, with: :render_unprocessable_entity
@@ -36,6 +37,17 @@ module Api
         render json: { error: "bad_request", details: error.message }, status: :bad_request
       end
 
+      def render_plan_limit_exceeded(error)
+        render json: {
+          error: "plan_limit_exceeded",
+          details: {
+            key: error.limit_key,
+            limit: error.limit,
+            current: error.current
+          }
+        }, status: :unprocessable_entity
+      end
+
       def authenticate_user!
         header = request.headers["Authorization"].to_s
         token = header.split(" ").last
@@ -61,6 +73,17 @@ module Api
 
       def verify_pundit_policy_scope?
         pundit_user && action_name == "index"
+      end
+
+      def log_audit!(action:, record:, organization: nil, metadata: nil)
+        AuditLogger.log!(
+          actor: current_user,
+          organization: organization || record.try(:organization),
+          action: action,
+          auditable: record,
+          metadata: metadata,
+          request: request
+        )
       end
     end
   end
